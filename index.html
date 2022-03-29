@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>SpeedTyping</title>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        body{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items:center;
+            min-height: 50vh;
+            background-color: aqua;
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+        }
+        .container{
+            background-color: #f0db4f;
+            padding: 1rem;
+            border-radius: .5rem;
+            width: 700px;
+            max-width: 80%;
+            min-width: 500px;
+
+        }
+        textarea{
+            border-radius: .5rem;
+            width: 100%;
+           
+            padding:10px;
+             
+           
+
+            
+        }
+        #typingArea{
+            font-size: larger;
+        }
+        .quoteDisplay{
+            font-size: larger;
+            padding:calc(10px);
+        }
+        .incorrect{
+            color:red;
+        }
+        .correct{
+            color: green;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="timer" id="timer">0</div>
+    <div class="container">
+        <div class="quoteDisplay" id="quoteDisplay"></div>
+        <textarea name="typingArea" id="typingArea" cols="3" rows="10"></textarea>
+    
+    
+    </div>
+    <script>
+        
+        const RANDOM_QUOTE_API_URL='http://api.quotable.io/random';
+        
+        const quoteInputElement=document.getElementById('typingArea');
+         
+        quoteInputElement.addEventListener('input',()=>{
+            const arrayOfSpanElement=document.getElementById('quoteDisplay').querySelectorAll('span');
+            const arrayOfTypingarea=quoteInputElement.value.split('');
+           arrayOfSpanElement.forEach((characterSpan,index)=>{
+               const character=arrayOfTypingarea[index];
+              if(character==null)
+              {
+                characterSpan.classList.remove('correct');
+                   characterSpan.classList.remove('incorrect');
+              }
+                else if(character===characterSpan.innerText)
+               {
+                   characterSpan.classList.add('correct');
+                   characterSpan.classList.remove('incorrect');
+               }
+               else{
+                characterSpan.classList.remove('correct');
+                   characterSpan.classList.add('incorrect');
+               }
+           })
+        })
+
+
+
+
+        //fetching api
+        function getRandomQuote(){
+            return fetch(RANDOM_QUOTE_API_URL).then(response=>response.json())
+            .then(data=>data.content)
+        }
+        async function getNextQuote(){
+            const quote=await getRandomQuote();
+           // console.log(quote);
+            //document.getElementById("quoteDisplay").innerText=quote;
+            document.getElementById("typingArea").value=null;
+            quote.split('').forEach(character => {
+                
+                const characterSpan=document.createElement('span');
+                //characterSpan.classList.add('incorrect');
+                characterSpan.innerText=character;
+                document.getElementById("quoteDisplay").appendChild(characterSpan);
+                
+            });
+        }
+        getNextQuote();
+    </script>
+</body>
+</html>
